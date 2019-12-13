@@ -133,7 +133,7 @@ const Form = ({ values, errors, touched, status }) => {
           {users &&
             users.map((user, index) => {
               return (
-                <div role="listitem" className="item">
+                <div role="listitem" className="item" key={index}>
                   <i aria-hidden="true" className="user circle big icon"></i>
                   <div className="content">
                     <div className="header">{user.name}</div>
