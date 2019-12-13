@@ -4,10 +4,7 @@ import Form from "./components/Form";
 
 function App() {
   return (
-    <div
-      className="ui center aligned middle aligned grid"
-      style={{ height: "100vh" }}
-    >
+    <div className="ui grid" style={{ height: "100vh", paddingTop: 30 }}>
       <Form />
     </div>
   );

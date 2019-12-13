@@ -21,7 +21,7 @@ const Form = ({ values, errors, touched, status }) => {
   }, [status]);
 
   return (
-    <div className="column" style={{ maxWidth: "450px" }}>
+    <div className="column" style={{ maxWidth: "450px", margin: "0 auto" }}>
       <h2 className="ui header">
         <i aria-hidden="true" className="vcard icon"></i>
         <div className="content">
@@ -121,15 +121,28 @@ const Form = ({ values, errors, touched, status }) => {
           </button>
         </div>
       </MyForm>
-      <div>
-        {users &&
-          users.map((user, index) => {
-            return (
-              <div key={index}>
-                <strong>{user.name}</strong> - {user.email}
-              </div>
-            );
-          })}
+      <div
+        className="column"
+        style={{ maxWidth: "450px", margin: "0 auto", marginTop: 30 }}
+      >
+        <h2 className="ui header">
+          <i aria-hidden="true" className="users icon"></i>
+          <div className="content">BOARDED USERS</div>
+        </h2>
+        <div role="list" className="ui divided left aligned list">
+          {users &&
+            users.map((user, index) => {
+              return (
+                <div role="listitem" className="item">
+                  <i aria-hidden="true" className="user circle big icon"></i>
+                  <div className="content">
+                    <div className="header">{user.name}</div>
+                    {user.email}
+                  </div>
+                </div>
+              );
+            })}
+        </div>
       </div>
     </div>
   );
