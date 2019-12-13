@@ -1,71 +1,137 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { withFormik, Form as MyForm, Field } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 
 const Form = ({ values, errors, touched, status }) => {
+  const [users, setUsers] = useState([]);
+
   console.log({ values });
   console.log({ touched });
   console.log({ errors });
   console.log({ status });
+  console.log({ users });
+
+  useEffect(() => {
+    if (status) {
+      const { name, email, password } = status;
+      const newUser = { name, email, password };
+      setUsers([...users, newUser]);
+    }
+  }, [status]);
+
   return (
-    <MyForm style={{ display: "flex", flexDirection: "column" }}>
-      <div className={`ui ${touched.name && errors.name && `error`} input`}>
-        <Field type="text" name="name" placeholder="enter your name" />
+    <div className="column" style={{ maxWidth: "450px" }}>
+      <h2 className="ui header">
+        <i aria-hidden="true" className="vcard icon"></i>
+        <div className="content">
+          USER ONBOARDING
+          <div className="sub header">This is the place to get onboard!</div>
+        </div>
+      </h2>
+      <MyForm className="ui large form">
+        <div className="ui stacked segment">
+          <div className={`${touched.name && errors.name && `error`} field`}>
+            <div
+              className={`ui fluid ${touched.name &&
+                errors.name &&
+                `error`} input`}
+            >
+              <Field type="text" name="name" placeholder="enter your name" />
+            </div>
+            {touched.name && errors.name && (
+              <p style={{ color: "#9f3a38" }}>{errors.name}</p>
+            )}
+          </div>
+          <div className={`${touched.email && errors.email && `error`} field`}>
+            <div
+              className={`ui fluid ${touched.email &&
+                errors.email &&
+                `error`} input`}
+            >
+              <Field
+                type="email"
+                name="email"
+                placeholder="enter your email address"
+              />
+            </div>
+            {touched.email && errors.email && (
+              <p style={{ color: "#9f3a38" }}>{errors.email}</p>
+            )}
+          </div>
+          <div
+            className={`${touched.password &&
+              errors.password &&
+              `error`} field`}
+          >
+            <div
+              className={`ui fluid ${touched.password &&
+                errors.password &&
+                `error`} input`}
+            >
+              <Field
+                type="password"
+                name="password"
+                placeholder="enter your password"
+              />
+            </div>
+            {touched.password && errors.password && (
+              <p style={{ color: "#9f3a38" }}>{errors.password}</p>
+            )}
+          </div>
+          <div
+            className={`${touched.confirmPassword &&
+              errors.confirmPassword &&
+              `error`} field`}
+          >
+            <div
+              className={`ui fluid ${touched.confirmPassword &&
+                errors.confirmPassword &&
+                `error`} input`}
+            >
+              <Field
+                type="password"
+                name="confirmPassword"
+                placeholder="confirm your password"
+              />
+            </div>
+            {touched.confirmPassword && errors.confirmPassword && (
+              <p style={{ color: "#9f3a38" }}>{errors.confirmPassword}</p>
+            )}
+          </div>
+          <div className="field">
+            <div className="ui checkbox">
+              <Field
+                id="acceptTerms"
+                className="hidden"
+                type="checkbox"
+                name="acceptTerms"
+                checked={values.acceptTerms}
+              />
+              <label htmlFor="acceptTerms">
+                Please accept the terms and conditions
+              </label>
+            </div>
+          </div>
+          {touched.acceptTerms && errors.acceptTerms && (
+            <p style={{ color: "#9f3a38" }}>{errors.acceptTerms}</p>
+          )}
+          <button type="submit" className="ui teal large fluid button">
+            Get Onboard!
+          </button>
+        </div>
+      </MyForm>
+      <div>
+        {users &&
+          users.map((user, index) => {
+            return (
+              <div key={index}>
+                <strong>{user.name}</strong> - {user.email}
+              </div>
+            );
+          })}
       </div>
-      {touched.name && errors.name && <p>{errors.name}</p>}
-      <div className={`ui ${touched.email && errors.email && `error`} input`}>
-        <Field
-          type="email"
-          name="email"
-          placeholder="enter your email address"
-        />
-      </div>
-      {touched.email && errors.email && <p>{errors.email}</p>}
-      <div
-        className={`ui ${touched.password && errors.password && `error`} input`}
-      >
-        <Field
-          type="password"
-          name="password"
-          placeholder="enter your password"
-        />
-      </div>
-      {touched.password && errors.password && <p>{errors.password}</p>}
-
-      <div
-        className={`ui ${touched.confirmPassword &&
-          errors.confirmPassword &&
-          `error`} input`}
-      >
-        <Field
-          type="password"
-          name="confirmPassword"
-          placeholder="confirm your password"
-        />
-      </div>
-      {touched.confirmPassword && errors.confirmPassword && (
-        <p>{errors.confirmPassword}</p>
-      )}
-
-      <div className="ui checkbox">
-        <Field
-          id="acceptTerms"
-          className="hidden"
-          type="checkbox"
-          name="acceptTerms"
-          checked={values.acceptTerms}
-        />
-        <label htmlFor="acceptTerms">
-          Please accept the terms and conditions
-        </label>
-      </div>
-      {touched.acceptTerms && errors.acceptTerms && <p>{errors.acceptTerms}</p>}
-
-      <button type="submit" className="ui primary button">
-        Add New User
-      </button>
-    </MyForm>
+    </div>
   );
 };
 
@@ -102,10 +168,13 @@ const FormWithFormik = withFormik({
         value => value === true
       )
   }),
-  handleSubmit(values, { setStatus }) {
+  handleSubmit(values, { setStatus, resetForm }) {
     axios
       .post("https://reqres.in/api/users/", values)
-      .then(res => setStatus(res.data))
+      .then(res => {
+        setStatus(res.data);
+        resetForm();
+      })
       .catch(err => console.log(err));
   }
 })(Form);
